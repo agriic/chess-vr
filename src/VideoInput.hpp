@@ -33,7 +33,7 @@ private:
     bool useCaptureCamera = false;
     int captureCamera = 0;
 
-    std::atomic<bool> stopped;
+    std::atomic<bool> stopped{};
     std::thread th;
     ConcurrentQueue<CapturedFrame> frames;
 

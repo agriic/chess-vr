@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <string>
 #include "VideoInput.hpp"
 #include "Log.hpp"
 #include "App.hpp"
@@ -14,8 +14,11 @@ int main()
 //    VideoInput video("/Users/adumins/projects/personal/chess-vr/samples/chess_img.png");
 //    VideoInput video(0);
 
-    App app("/Users/adumins/projects/personal/chess-vr/samples/chess.avi");
+    std::string path("/Users/danpetrov/GIT/chess-vr/samples/chess.avi");
+    if (fileExists(path)) {
+        App app(path);
+        app.run();
+    }
 //    App app("/Users/adumins/projects/personal/chess-vr/samples/chess_img.png");
-    app.run();
 
 }
