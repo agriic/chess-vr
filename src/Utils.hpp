@@ -1,7 +1,11 @@
 #pragma once
 
+#define LOCK(X) std::lock_guard<std::mutex> X ## _lock(X)
+
 namespace aic
 {
+
+
     typedef std::chrono::steady_clock Timer;
     typedef std::chrono::system_clock Date;
     inline auto TimerMilliseconds() { return std::chrono::time_point_cast<std::chrono::milliseconds>(Timer::now()).time_since_epoch().count(); }

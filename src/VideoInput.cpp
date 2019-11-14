@@ -118,7 +118,7 @@ void aic::VideoInput::run()
 
         videoCapture.release();
 
-        if (videoType == VideoType::VOD)
+        if (videoType == VideoType::VOD || videoType == VideoType::IMAGE)
             break;
     }
 }
