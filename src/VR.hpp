@@ -26,6 +26,7 @@ private:
     void processFrame(CapturedFrame& frame);
 
     bool processLines(std::vector<cv::Vec2f>& lines, cv::Mat& frame);
+    bool findOrthogonals(std::vector<cv::Vec2f>& lines);
 private:
     App& app;
 
