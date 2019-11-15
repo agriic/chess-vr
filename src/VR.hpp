@@ -27,7 +27,8 @@ private:
 
     bool findCorners(cv::Mat& frame);
 
-    
+    bool findOrthogonals(std::vector<cv::Vec2f>& lines);
+
 private:
     App& app;
 

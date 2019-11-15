@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <string>
 #include "VideoInput.hpp"
 #include "Log.hpp"
 #include "App.hpp"
@@ -15,7 +15,7 @@ int main(int argc, const char* argv[])
     if (argc > 1) {
         path = argv[1];
     }
-
+    
     App app(path);
     app.run();
 }

@@ -47,9 +47,11 @@ static void drawLines(std::vector<cv::Vec2f>& lines, cv::Mat& frame, cv::Scalar 
     {
         float rho = lines[i][0], theta = lines[i][1];
 
-        cv::Point pt1, pt2;
+        cv::Point pt1, pt2; // start and end points of drawn line segment
+        
         double a = cos(theta), b = sin(theta);
         double x0 = a*rho, y0 = b*rho;
+        // calculate start and end points of line segment in Cartesian system
         pt1.x = cvRound(x0 + 1000*(-b));
         pt1.y = cvRound(y0 + 1000*(a));
         pt2.x = cvRound(x0 - 1000*(-b));
@@ -179,7 +181,26 @@ bool VR::findCorners(cv::Mat &frame)
     drawLines(lines, frame, cv::Scalar(0,0,255),2);
     app.show("FR 2", frame);
 
+    findOrthogonals(lines);
+
     return true;
+}
+
+bool VR::findOrthogonals(std::vector<cv::Vec2f>& lines)
+{
+    int found = 0; // accum of found orthogonal pairs
+    for (size_t i = 0; i < lines.size(); i++)
+    {
+        for (size_t j = i; j < lines.size(); j++)
+        {
+            if (abs(lines[i][1] - lines[j][1]) > 0.78)
+            {
+                ++found;
+            }
+        }
+    }
+    //Log(INFO) << "Found orthogonal line pairs :\n" << found;
+    return (found > 0);
 }
 
 void VR::processFrame(CapturedFrame& cframe)
@@ -192,6 +213,8 @@ void VR::processFrame(CapturedFrame& cframe)
     cv::GaussianBlur(frame, blurred, cv::Size(3,3), 0);
 
     if (!findCorners(blurred)) return;
+
+    
 }
 
 }
