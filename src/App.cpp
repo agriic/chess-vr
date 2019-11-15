@@ -18,6 +18,7 @@ void App::run()
         if (video.getFrame(f)) {
             vr.pushFrame(f);
 
+            // TODO: show something resized - small
             if (f.frameNumber % 2 == 1) {
 //                cv::imshow("Logs", f.frame);
             }

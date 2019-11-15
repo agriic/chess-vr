@@ -21,13 +21,22 @@ public:
 
     void pushFrame(CapturedFrame& frame);
 
+public:
+
+    const int SQS = 64; // square size
+    const int BS = SQS * 8; // board size
+
 private:
     void run();
     void processFrame(CapturedFrame& frame);
 
-    bool findCorners(cv::Mat& frame);
+    std::vector<cv::Point2f> findCorners(cv::Mat& frame);
 
     bool findOrthogonals(std::vector<cv::Vec2f>& lines);
+
+    void warpBoard(std::vector<cv::Point2f>& croners, cv::Mat& source, cv::Mat& out, bool rotationSearch = false);
+
+    void findRotation(cv::Mat& warpedImage);
 
 private:
     App& app;
@@ -36,5 +45,7 @@ private:
     std::thread th;
 
     ConcurrentQueue<CapturedFrame> frames;
+
+    int rotation = -1;
 };
 }

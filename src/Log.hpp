@@ -77,6 +77,20 @@ public:
         return *this;
     }
 
+    Log &operator<<(const cv::Point &val)
+    {
+        if (l.level <= threshold)
+        {
+            l.s.append("[");
+            l.s.append(std::to_string(val.x));
+            l.s.append(",");
+            l.s.append(std::to_string(val.y));
+            l.s.append("]");
+        }
+
+        return *this;
+    }
+
     Log &operator<<(const std::string &val)
     {
         if (l.level <= threshold)

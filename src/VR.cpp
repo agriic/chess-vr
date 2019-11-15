@@ -8,6 +8,9 @@
 #include <numeric>
 #include <functional>
 
+#include <opencv2/features2d.hpp>
+#include <opencv2/calib3d.hpp>
+
 namespace aic
 {
 VR::VR(App& app)
@@ -61,8 +64,32 @@ static void drawLines(std::vector<cv::Vec2f>& lines, cv::Mat& frame, cv::Scalar 
     }
 }
 
-bool VR::findCorners(cv::Mat &frame)
+
+//Find point (x,y) where two parameterized lines intersect :p Returns 0 if lines are parallel
+static cv::Point parametricIntersect(cv::Vec2f line1, cv::Vec2f line2)
 {
+    float r1 = line1[0], t1 = line1[1];
+    float r2 = line2[0], t2 = line2[1];
+
+    float ct1=cosf(t1);     //matrix element a
+    float st1=sinf(t1);     //b
+    float ct2=cosf(t2);     //c
+    float st2=sinf(t2);     //d
+    float d=ct1*st2-st1*ct2;        //determinative (rearranged matrix for inverse)
+
+    if(d!=0.0f) {
+        return cv::Point((int)((st2*r1-st1*r2)/d), (int)((-ct2*r1+ct1*r2)/d));
+    } else { //lines are parallel and will NEVER intersect!
+        return cv::Point(-1,-1);
+    }
+}
+
+
+
+std::vector<cv::Point2f> VR::findCorners(cv::Mat &frame)
+{
+    std::vector<cv::Point2f> corners;
+
     cv::Mat cannys;
     cv::Canny(frame, cannys, 100, 300);
 
@@ -137,7 +164,7 @@ bool VR::findCorners(cv::Mat &frame)
     }
 
     if (dists.size() < 16) {
-        return false;
+        return corners;
     }
 
     auto toRemove = (dists.size() - 14) / 2;
@@ -178,12 +205,32 @@ bool VR::findCorners(cv::Mat &frame)
 //        Log(DBG) << lines[i][1] << " " << lines[i][0];
 //    }
 
-    drawLines(lines, frame, cv::Scalar(0,0,255),2);
-    app.show("FR 2", frame);
+    if (lines.size() != 18) return corners;
 
-    findOrthogonals(lines);
+    // Find corners
+    auto p1 = parametricIntersect(lines[0], lines[17]);
+    auto p2 = parametricIntersect(lines[0], lines[9]);
+    auto p3 = parametricIntersect(lines[8], lines[9]);
+    auto p4 = parametricIntersect(lines[8], lines[17]);
 
-    return true;
+    corners.push_back(p1);
+    corners.push_back(p2);
+    corners.push_back(p3);
+    corners.push_back(p4);
+
+//    cv::circle(frame, p1, 3, cv::Scalar(0, 255, 0), -1);
+//    cv::circle(frame, p2, 3, cv::Scalar(0, 255, 0), -1);
+//    cv::circle(frame, p3, 3, cv::Scalar(0, 255, 0), -1);
+//    cv::circle(frame, p4, 3, cv::Scalar(0, 255, 0), -1);
+
+//    Log(DBG) << p1 << " " << p2 << " " << p3 << " " << p4;
+
+//    drawLines(lines, frame, cv::Scalar(0,0,255),1);
+//    app.show("FR 2", frame);
+
+//    findOrthogonals(lines);
+
+    return corners;
 }
 
 bool VR::findOrthogonals(std::vector<cv::Vec2f>& lines)
@@ -203,6 +250,84 @@ bool VR::findOrthogonals(std::vector<cv::Vec2f>& lines)
     return (found > 0);
 }
 
+double calcWhiteness(cv::Mat& gray)
+{
+    double sum = 0;
+    for( int y = 0; y < gray.rows; y++ ) {
+        uint8_t* rs = &gray.at<uint8_t>(y,0);
+        for( int x = 0; x < gray.cols; x++ ) {
+            sum += rs[x];
+        }
+    }
+
+    sum /= gray.rows * gray.cols;
+
+    return sum;
+}
+
+void VR::findRotation(cv::Mat& warpedImage)
+{
+    cv::Mat gs;
+    cv::cvtColor(warpedImage, gs, cv::COLOR_BGR2GRAY);
+
+    cv::Mat corner;
+    corner = warpedImage(cv::Rect(0,0,SQS,SQS));
+    auto r = 0;
+    auto w = calcWhiteness(corner);
+    corner = warpedImage(cv::Rect(BS-SQS,0,SQS,SQS));
+    auto w2 = calcWhiteness(corner);
+    if (w2 > w) {
+        r = 1;
+        w = w2;
+    }
+    corner = warpedImage(cv::Rect(BS-SQS,BS-SQS,SQS,SQS));
+    auto w3 = calcWhiteness(corner);
+    if (w3 > w) {
+        r = 2;
+        w = w3;
+    }
+    corner = warpedImage(cv::Rect(0,BS-SQS,SQS,SQS));
+    auto w4 = calcWhiteness(corner);
+    if (w4 > w) {
+        r = 3;
+        w = w4;
+    }
+
+    rotation = r;
+}
+
+void VR::warpBoard(std::vector<cv::Point2f> &corners, cv::Mat& src, cv::Mat& out, bool rotationSearch)
+{
+    if (rotation < 0 && !rotationSearch) {
+        warpBoard(corners, src, out, true);
+        findRotation(out);
+    }
+
+    std::vector<cv::Point2f> pts_dst;
+    pts_dst.resize(4);
+
+    auto r = 0;
+
+    if (rotation > 0) {
+        r = rotation;
+    }
+
+    pts_dst[(0 + r) % 4] = cv::Point2f(0, 0);
+    pts_dst[(1 + r) % 4] = cv::Point2f(0, BS);
+    pts_dst[(2 + r) % 4] = cv::Point2f(BS, BS);
+    pts_dst[(3 + r) % 4] = cv::Point2f(BS, 0);
+
+       // Calculate Homography
+    cv::Mat h = cv::findHomography(corners, pts_dst);
+
+       // Warp source image to destination based on homography
+    cv::warpPerspective(src, out, h, cv::Size(BS, BS));
+
+//    Log(DBG) << im_out.rows << " " << im_out.cols;
+
+//    app.show("warped", out);
+}
+
 void VR::processFrame(CapturedFrame& cframe)
 {
     if (cframe.frame.empty()) return;
@@ -212,9 +337,21 @@ void VR::processFrame(CapturedFrame& cframe)
     cv::Mat blurred;
     cv::GaussianBlur(frame, blurred, cv::Size(3,3), 0);
 
-    if (!findCorners(blurred)) return;
+    auto corners = findCorners(blurred);
 
-    
+    if (corners.empty()) return;
+
+    cv::Mat dst;
+    warpBoard(corners, frame, dst);
+
+    //
+
+    // split and
+    cv::Mat cannys;
+    cv::Canny(dst, cannys, 20, 100);
+
+    app.show("WC", cannys);
+
 }
 
 }
