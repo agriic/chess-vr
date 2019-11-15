@@ -11,6 +11,7 @@ aic::VideoInput::VideoInput(const std::string &videoUrl)
 aic::VideoInput::VideoInput(int _captureCamera)
     : useCaptureCamera(true), captureCamera(_captureCamera)
 {
+    stopped = false;
     th = std::thread(&VideoInput::run, this);
 }
 
@@ -33,6 +34,18 @@ void aic::VideoInput::run()
     {
         cv::VideoCapture videoCapture;
         if (useCaptureCamera) {
+            /*
+             *  Set fixed camera capture settings, will need more exp on
+             *  actual device's video backend (Raspberry).
+             */
+            videoCapture.set(CV_CAP_PROP_FPS, 10);
+            videoCapture.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
+            videoCapture.set(CV_CAP_PROP_FRAME_HEIGHT, 960);
+            videoCapture.set(CV_CAP_PROP_EXPOSURE, -4); // 80ms exposure time
+            videoCapture.set(CV_CAP_PROP_AUTO_EXPOSURE, 0);
+            videoCapture.set(cv::CAP_PROP_AUTO_WB, 0);
+            videoCapture.set(CV_CAP_PROP_AUTOFOCUS, 0);
+            videoCapture.set(CV_CAP_PROP_ISO_SPEED, 100);
             videoCapture.open(captureCamera);
             videoType = VideoType::CAM;
         } else {
@@ -57,12 +70,12 @@ void aic::VideoInput::run()
         else if(videoType != VideoType::IMAGE)
             Log(INFO) << "Video opened: " << videoUrl;
 
-        int fps = 25;
+        int fps = 10;
         if (videoType == VideoType::STREAM
             || videoType == VideoType::VOD
             || videoType == VideoType::CAM)
         {
-            fps = videoCapture.get(cv::CAP_PROP_FPS);
+            fps = (int)videoCapture.get(cv::CAP_PROP_FPS);
             Log(INFO) << "FPS: " << fps;
         }
 
