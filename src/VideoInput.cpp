@@ -28,7 +28,7 @@ bool aic::VideoInput::getFrame(aic::CapturedFrame &frame)
 
 void aic::VideoInput::run()
 {
-    VideoType videoType;
+    VideoType videoType = VideoType::NONE;
 
     while (!stopped)
     {
