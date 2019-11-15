@@ -59,8 +59,16 @@ static void drawLines(std::vector<cv::Vec2f>& lines, cv::Mat& frame, cv::Scalar 
     }
 }
 
-bool VR::processLines(std::vector<cv::Vec2f>& lines, cv::Mat& frame)
+bool VR::findCorners(cv::Mat &frame)
 {
+    cv::Mat cannys;
+    cv::Canny(frame, cannys, 100, 300);
+
+
+    // Standard Hough Line Transform
+    std::vector<cv::Vec2f> lines; // will hold the results of the detection
+    HoughLines(cannys, lines, 1, CV_PI/180, 140, 0, 0); // runs the actual detection
+
     std::sort(lines.begin(), lines.end(), [](const cv::Vec2f& a, const cv::Vec2f& b)
     {
         return a[0] < b[0];
@@ -180,22 +188,10 @@ void VR::processFrame(CapturedFrame& cframe)
 
     cv::Mat& frame = cframe.frame;
 
-    cv::Mat cannys;
     cv::Mat blurred;
-
     cv::GaussianBlur(frame, blurred, cv::Size(3,3), 0);
-    cv::Canny(blurred, cannys, 100, 300);
 
-    cv::threshold(cannys, cannys, 240, 255, cv::THRESH_BINARY);
-
-//    app.show("Canny", cannys);
-
-
-    // Standard Hough Line Transform
-    std::vector<cv::Vec2f> lines; // will hold the results of the detection
-    HoughLines(cannys, lines, 1, CV_PI/180, 140, 0, 0); // runs the actual detection
-
-    processLines(lines, frame);
+    if (!findCorners(blurred)) return;
 }
 
 }

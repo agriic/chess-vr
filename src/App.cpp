@@ -4,11 +4,10 @@
 namespace aic
 {
 
-App::App(std::string url) : video(url), vr(*this)
-{}
+App::App(const std::string& path) : video(path), vr(*this)
+{
 
-App::App(int camera) : video(camera), vr(*this)
-{}
+}
 
 void App::run()
 {

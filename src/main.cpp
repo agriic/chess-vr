@@ -6,16 +6,16 @@
 
 using namespace aic;
 
-int main()
+int main(int argc, const char* argv[])
 {
     Log::threshold = ALL;
 
-//    VideoInput video("/Users/adumins/projects/personal/chess-vr/samples/chess.avi");
-//    VideoInput video("/Users/adumins/projects/personal/chess-vr/samples/chess_img.png");
-//    VideoInput video(0);
+    std::string path = "0"; // WebCam
 
-    App app("/Users/adumins/projects/personal/chess-vr/samples/chess.avi");
-//    App app("/Users/adumins/projects/personal/chess-vr/samples/chess_img.png");
+    if (argc > 1) {
+        path = argv[1];
+    }
+
+    App app(path);
     app.run();
-
 }

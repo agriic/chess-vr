@@ -8,8 +8,8 @@ namespace aic
 class VideoInput
 {
 public:
-    explicit VideoInput(const std::string &videoUrl);
-    explicit VideoInput(int captureCamera);
+    explicit VideoInput(const std::string &path);
+
     ~VideoInput();
 
     VideoInput(const VideoInput &) = delete;

@@ -12,8 +12,7 @@ namespace aic
 class App
 {
 public:
-    App(std::string url);
-    App(int camera);
+    App(const std::string& path);
     void run();
 
     void show(std::string window, cv::Mat frame);

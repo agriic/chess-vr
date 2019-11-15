@@ -2,22 +2,27 @@
 #include "VideoInput.hpp"
 #include "Log.hpp"
 
-aic::VideoInput::VideoInput(const std::string &videoUrl)
-    : videoUrl(videoUrl), stopped(false)
+aic::VideoInput::VideoInput(const std::string& path) : useCaptureCamera(false), stopped(false)
 {
-    th = std::thread(&VideoInput::run, this);
-}
+    if (fileExists(path)) {
+        videoUrl = path;
+    } else {
+        try {
+            int cam = std::stoi(path);
+            useCaptureCamera = true;
+            captureCamera = cam;
+        } catch(...) {
+            videoUrl = path; // rtmp, etc. streams..
+        }
+    }
 
-aic::VideoInput::VideoInput(int _captureCamera)
-    : useCaptureCamera(true), captureCamera(_captureCamera)
-{
     th = std::thread(&VideoInput::run, this);
 }
 
 aic::VideoInput::~VideoInput()
 {
     stopped = true;
-    th.join();
+    if (th.joinable()) th.join();
 }
 
 bool aic::VideoInput::getFrame(aic::CapturedFrame &frame)

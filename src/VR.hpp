@@ -25,7 +25,9 @@ private:
     void run();
     void processFrame(CapturedFrame& frame);
 
-    bool processLines(std::vector<cv::Vec2f>& lines, cv::Mat& frame);
+    bool findCorners(cv::Mat& frame);
+
+    
 private:
     App& app;
 
