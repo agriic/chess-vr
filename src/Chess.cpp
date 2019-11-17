@@ -38,7 +38,32 @@ void Board::setDefaultBoardState() {
         boardState.push_back(Piece(Piece::Type::PAWN, Piece::Color::WHITE, (char)i, 2));
         boardState.push_back(Piece(Piece::Type::PAWN, Piece::Color::BLACK, (char)i, 7));
     }
-    // TODO: Implement placement of other pieces
+    /* White pieces */
+    boardState.push_back(Piece(Piece::Type::ROOK, Piece::Color::WHITE, 'A', 1));
+    boardState.push_back(Piece(Piece::Type::ROOK, Piece::Color::WHITE, 'H', 1));
+
+    boardState.push_back(Piece(Piece::Type::KNIGHT, Piece::Color::WHITE, 'B', 1));
+    boardState.push_back(Piece(Piece::Type::KNIGHT, Piece::Color::WHITE, 'G', 1));
+
+    boardState.push_back(Piece(Piece::Type::BISHOP, Piece::Color::WHITE, 'C', 1));
+    boardState.push_back(Piece(Piece::Type::BISHOP, Piece::Color::WHITE, 'F', 1));
+
+    boardState.push_back(Piece(Piece::Type::QUEEN, Piece::Color::WHITE, 'D', 1));
+    boardState.push_back(Piece(Piece::Type::KING, Piece::Color::WHITE, 'E', 1));
+
+    /* Black pieces */
+    boardState.push_back(Piece(Piece::Type::ROOK, Piece::Color::BLACK, 'A', 1));
+    boardState.push_back(Piece(Piece::Type::ROOK, Piece::Color::BLACK, 'H', 1));
+
+    boardState.push_back(Piece(Piece::Type::KNIGHT, Piece::Color::BLACK, 'B', 1));
+    boardState.push_back(Piece(Piece::Type::KNIGHT, Piece::Color::BLACK, 'G', 1));
+
+    boardState.push_back(Piece(Piece::Type::BISHOP, Piece::Color::BLACK, 'C', 1));
+    boardState.push_back(Piece(Piece::Type::BISHOP, Piece::Color::BLACK, 'F', 1));
+
+    boardState.push_back(Piece(Piece::Type::QUEEN, Piece::Color::BLACK, 'D', 1));
+    boardState.push_back(Piece(Piece::Type::KING, Piece::Color::BLACK, 'E', 1));
+
 }
 
 Board::~Board() = default;

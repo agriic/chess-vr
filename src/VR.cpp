@@ -328,8 +328,7 @@ void VR::warpBoard(std::vector<cv::Point2f> &corners, cv::Mat& src, cv::Mat& out
 //    app.show("warped", out);
 }
 
-void
-VR::boardCell(cv::Mat &src, cv::Mat &dst, char column, int lvl)
+void VR::boardCell(cv::Mat &src, cv::Mat &dst, char column, int lvl)
 {
     int x(VR::SQS * ((int)column - 'A'));
     int y(VR::SQS * (abs(lvl - 8)));
@@ -355,7 +354,7 @@ void VR::processFrame(CapturedFrame& cframe)
 
     cv::Mat cannys, cell;
     cv::Canny(dst, cannys, 20, 100);
-    boardCell(dst, cell, 'A', 2); // pawn on a2
+    boardCell(cannys, cell, 'A', 2); // pawn on a2
 
     app.show("Cell", cell);
     app.show("WC", cannys);
