@@ -1,5 +1,6 @@
 #include "App.hpp"
 #include "Utils.hpp"
+#include "Chess.hpp"
 
 namespace aic
 {
@@ -13,6 +14,9 @@ void App::run()
 {
     CapturedFrame f;
     cv::Mat toShow;
+
+    Board chessBoard;
+    chessBoard.setDefaultBoardState();
 
     while (true) {
         if (video.getFrame(f)) {

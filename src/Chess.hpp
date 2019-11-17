@@ -1,6 +1,3 @@
-//
-// Created by Daniils Petrovs on 17/11/2019.
-//
 #include <vector>
 
 #ifndef CHESS_VR_CHESS_HPP
@@ -23,27 +20,29 @@ public:
         BLACK
     };
 
-    explicit Piece(Type t, Color col, char colum, char lvl);
+    explicit Piece(Type t, Color col, char colum, int lvl);
 
     void setPieceType(Type t);
     void setPieceColor(Color col);
     void setPieceColumn(char colum);
-    void setPieceLevel(char lvl);
+    void setPieceLevel(int lvl);
 
 private:
     Type type{};
     Color color{};
     char column{};
-    char level{};
+    int level{};
 };
 
 class Board {
 
 public:
+    Board();
     std::vector<Piece> boardState;
-    Board(const std::vector<Piece>& pieces);
 
     void setBoardState(std::vector<Piece> pieces);
+    void setDefaultBoardState();
+    ~Board();
 };
 
 

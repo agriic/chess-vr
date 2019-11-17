@@ -38,6 +38,8 @@ private:
 
     void findRotation(cv::Mat& warpedImage);
 
+    void boardCell(cv::Mat& src, cv::Mat& dst, char column, int lvl);
+
 private:
     App& app;
 

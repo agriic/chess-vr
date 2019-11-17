@@ -1,11 +1,7 @@
-//
-// Created by Daniils Petrovs on 17/11/2019.
-//
 #include "Chess.hpp"
-
 #include <utility>
 
-Piece::Piece(Type t, Piece::Color col, char colum, char lvl) {
+Piece::Piece(Type t, Piece::Color col, char colum, int lvl) {
     setPieceType(t);
     setPieceColor(col);
     setPieceColumn(colum);
@@ -24,16 +20,25 @@ void Piece::setPieceColumn(char colum) {
     column = colum;
 }
 
-void Piece::setPieceLevel(char lvl) {
+void Piece::setPieceLevel(int lvl) {
     level = lvl;
 }
 
-Board::Board(const std::vector<Piece>& pieces) {
+Board::Board() = default;
+
+void Board::setBoardState(std::vector<Piece> pieces) {
     for (auto piece : pieces) {
         boardState.push_back(piece);
     }
 }
 
-void Board::setBoardState(std::vector<Piece> pieces) {
-    boardState = std::move(pieces);
+void Board::setDefaultBoardState() {
+    // populate with pawns for white and black
+    for (int i = 'A'; i < 'I'; ++i) {
+        boardState.push_back(Piece(Piece::Type::PAWN, Piece::Color::WHITE, (char)i, 2));
+        boardState.push_back(Piece(Piece::Type::PAWN, Piece::Color::BLACK, (char)i, 7));
+    }
+    // TODO: Implement placement of other pieces
 }
+
+Board::~Board() = default;
