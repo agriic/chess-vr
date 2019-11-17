@@ -336,6 +336,14 @@ void VR::boardCell(cv::Mat &src, cv::Mat &dst, char column, int lvl)
     dst = src(cv::Rect(x, y, VR::SQS, VR::SQS));
 }
 
+bool VR::cellHasPiece(cv::Mat &src, int thresh=150)
+{
+    int margin = 10;
+    cv::Mat roi(src(cv::Rect(margin, margin,src.size().width - margin,src.size().height - margin)));
+
+    return cv::countNonZero(roi) > thresh;
+}
+
 void VR::processFrame(CapturedFrame& cframe)
 {
     if (cframe.frame.empty()) return;
@@ -354,7 +362,9 @@ void VR::processFrame(CapturedFrame& cframe)
 
     cv::Mat cannys, cell;
     cv::Canny(dst, cannys, 20, 100);
-    boardCell(cannys, cell, 'A', 2); // pawn on a2
+    boardCell(cannys, cell, 'A', 2);
+
+    Log(INFO) << (cellHasPiece(cell) ? "YES" : "NO");
 
     app.show("Cell", cell);
     app.show("WC", cannys);
