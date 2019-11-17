@@ -15,6 +15,9 @@ void App::run()
     CapturedFrame f;
     cv::Mat toShow;
 
+    /*
+     * Create chessboard and set initial state with pieces in their default locations
+     */
     Board chessBoard;
     chessBoard.setDefaultBoardState();
 
@@ -28,15 +31,12 @@ void App::run()
             }
         }
 
-        if (true) {
-            FrameToShow poppedValue;
-            while (imagesToShow.tryPop(poppedValue)) {
-                cv::imshow(poppedValue.window, poppedValue.frame);
-            }
-
-            if (cv::waitKey(1) == 27) {
-                break;
-            }
+        FrameToShow poppedValue;
+        while (imagesToShow.tryPop(poppedValue)) {
+            cv::imshow(poppedValue.window, poppedValue.frame);
+        }
+        if (cv::waitKey(1) == 27) {
+            break;
         }
     }
 

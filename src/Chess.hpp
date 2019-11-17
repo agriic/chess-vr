@@ -27,7 +27,6 @@ public:
     void setPieceColumn(char colum);
     void setPieceLevel(int lvl);
 
-private:
     Type type{};
     Color color{};
     char column{};
@@ -38,11 +37,15 @@ class Board {
 
 public:
     Board();
-    std::vector<Piece> boardState;
 
     void setBoardState(std::vector<Piece> pieces);
     void setDefaultBoardState();
+    int getChessBoardPieceCount();
+    Piece getPieceByIndex(int index);
     ~Board();
+
+private:
+    std::vector<Piece> boardState;
 };
 
 

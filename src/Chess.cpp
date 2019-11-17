@@ -66,4 +66,12 @@ void Board::setDefaultBoardState() {
 
 }
 
+int Board::getChessBoardPieceCount() {
+    return boardState.size();
+}
+
+Piece Board::getPieceByIndex(int index) {
+    return boardState.at(index);
+}
+
 Board::~Board() = default;
