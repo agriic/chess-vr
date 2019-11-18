@@ -15,10 +15,16 @@ public:
 
     /*
      * Write PGN tags in interactive mode from user input.
+     *
+     * @param void
+     * @return void
      */
     void writeTagsInteractive();
     /*
-     * Return entire moveText as single string.
+     * Get entire moveText part of the PGN to be written to file.
+     *
+     * @param void
+     * @return string of moveText moves.
      */
     std::string getMoveText();
 
