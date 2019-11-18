@@ -54,10 +54,31 @@ public:
      */
     void setPieceLevel(int lvl);
 
-    Type type{};
-    Color color{};
-    char column{};
-    int level{};
+    Piece::Type getPieceType()
+    {
+        return this->type;
+    }
+
+    Piece::Color getPieceColor()
+    {
+        return this->color;
+    }
+
+    char getPieceCol()
+    {
+        return this->column;
+    }
+
+    int getPieceLvl()
+    {
+        return this->level;
+    }
+
+private:
+    Piece::Type type;
+    Piece::Color color;
+    char column;
+    int level;
 };
 
 class Board {
@@ -96,6 +117,8 @@ public:
      * @return Piece
      */
     Piece getPieceByIndex(int index);
+
+    std::vector<Piece> getBoardState();
 
     ~Board();
 

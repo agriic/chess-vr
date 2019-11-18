@@ -1,40 +1,49 @@
 #include "Chess.hpp"
 #include <utility>
 
-Piece::Piece(Type t, Piece::Color col, char colum, int lvl) {
+Board::Board() = default;
+
+Piece::Piece(Type t, Piece::Color col, char colum, int lvl)
+{
     setPieceType(t);
     setPieceColor(col);
     setPieceColumn(colum);
     setPieceLevel(lvl);
 }
 
-void Piece::setPieceType(Piece::Type t) {
+void Piece::setPieceType(Piece::Type t)
+{
     type = t;
 }
 
-void Piece::setPieceColor(Piece::Color col) {
+void Piece::setPieceColor(Piece::Color col)
+{
     color = col;
 }
 
-void Piece::setPieceColumn(char colum) {
+void Piece::setPieceColumn(char colum)
+{
     column = colum;
 }
 
-void Piece::setPieceLevel(int lvl) {
+void Piece::setPieceLevel(int lvl)
+{
     level = lvl;
 }
 
-Board::Board() = default;
 
-void Board::setBoardState(std::vector<Piece> pieces) {
+void Board::setBoardState(std::vector<Piece> pieces)
+{
     for (auto piece : pieces) {
         boardState.push_back(piece);
     }
 }
 
-void Board::setDefaultBoardState() {
-    // populate with pawns for white and black
-    for (int i = 'A'; i < 'I'; ++i) {
+void Board::setDefaultBoardState()
+{
+    // Populate with pawns for white and black.
+    for (int i = 'A'; i < 'I'; ++i)
+    {
         boardState.push_back(Piece(Piece::Type::PAWN, Piece::Color::WHITE, (char)i, 2));
         boardState.push_back(Piece(Piece::Type::PAWN, Piece::Color::BLACK, (char)i, 7));
     }
@@ -66,12 +75,19 @@ void Board::setDefaultBoardState() {
 
 }
 
-int Board::getChessBoardPieceCount() {
+int Board::getChessBoardPieceCount()
+{
     return boardState.size();
 }
 
-Piece Board::getPieceByIndex(int index) {
+Piece Board::getPieceByIndex(int index)
+{
     return boardState.at(index);
+}
+
+std::vector<Piece> Board::getBoardState()
+{
+    return boardState;
 }
 
 Board::~Board() = default;
