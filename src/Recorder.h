@@ -17,6 +17,9 @@ public:
      * Write PGN tags in interactive mode from user input.
      */
     void writeTagsInteractive();
+    /*
+     * Return entire moveText as single string.
+     */
     std::string getMoveText();
 
 private:
