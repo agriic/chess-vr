@@ -86,13 +86,14 @@ class Board {
 public:
     Board();
 
+    void addPiece(Piece piece);
     /*
      * Set the board state from collection of pieces.
      *
      * @param pieces vector of Pieces
      * @return void.
      */
-    void setBoardState(std::vector<Piece> pieces);
+    void addPieces(const std::vector<Piece>& pieces);
 
     /*
      * Set default board state as start of a normal game.
@@ -124,6 +125,7 @@ public:
 
 private:
     std::vector<Piece> boardState;
+
 };
 
 

@@ -5,10 +5,10 @@ Board::Board() = default;
 
 Piece::Piece(Type t, Piece::Color col, char colum, int lvl)
 {
-    setPieceType(t);
-    setPieceColor(col);
-    setPieceColumn(colum);
-    setPieceLevel(lvl);
+    this->type = t;
+    this->color = col;
+    this->column = colum;
+    this->level = lvl;
 }
 
 void Piece::setPieceType(Piece::Type t)
@@ -31,8 +31,12 @@ void Piece::setPieceLevel(int lvl)
     level = lvl;
 }
 
+void Board::addPiece(Piece piece)
+{
+    boardState.push_back(piece);
+}
 
-void Board::setBoardState(std::vector<Piece> pieces)
+void Board::addPieces(const std::vector<Piece>& pieces)
 {
     for (auto piece : pieces) {
         boardState.push_back(piece);
