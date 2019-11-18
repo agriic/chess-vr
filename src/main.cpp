@@ -10,7 +10,7 @@ int main(int argc, const char* argv[])
 {
     Log::threshold = ALL;
 
-    std::string path = "0"; // WebCam
+    std::string path = "/Users/danpetrov/GIT/chess-vr/samples/chess.avi"; // WebCam
 
     if (argc > 1) {
         path = argv[1];
