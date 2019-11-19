@@ -6,6 +6,7 @@
 #include "VideoInput.hpp"
 #include "VR.hpp"
 #include "ConcurrentQueue.hpp"
+#include "Game.hpp"
 
 namespace aic
 {
@@ -26,6 +27,7 @@ private:
 
     VideoInput video;
     VR vr;
+    Game game;
 
     ConcurrentQueue<FrameToShow> imagesToShow;
 };

@@ -4,14 +4,18 @@
 
 namespace aic
 {
-
-
     typedef std::chrono::steady_clock Timer;
     typedef std::chrono::system_clock Date;
     inline auto TimerMilliseconds() { return std::chrono::time_point_cast<std::chrono::milliseconds>(Timer::now()).time_since_epoch().count(); }
 
     typedef decltype(std::chrono::seconds(0)) TSecs;
     typedef decltype(std::chrono::minutes(0)) TMins;
+
+    enum class VRRequest {
+        NONE,
+        GAME_START,
+        MOVE
+    };
 
     struct CapturedFrame
     {
@@ -26,6 +30,7 @@ namespace aic
         { } 
 
         uint64_t frameNumber = 0;
+        VRRequest request = VRRequest::NONE;
         Timer::time_point timer;
         Date::time_point date;
         cv::Mat frame;
