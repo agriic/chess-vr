@@ -21,7 +21,7 @@ public:
         BLACK
     };
 
-    explicit Piece(Type t, Color col, char colum, int lvl);
+    explicit Piece(Type type, Color color, char file, int rank);
 
     /*
      * Set the piece location.

@@ -6,10 +6,10 @@ namespace aic
 
 aic::Board::Board() = default;
 
-aic::Piece::Piece(Type t, Piece::Color col, char file, int rank)
+aic::Piece::Piece(Type type, Piece::Color color, char file, int rank)
 {
-    type = t;
-    color = col;
+    this->type = type;
+    this->color = color;
     this->file = file;
     this->rank = rank;
 }
