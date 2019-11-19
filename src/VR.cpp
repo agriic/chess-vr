@@ -1,15 +1,16 @@
 #include "VR.hpp"
 
-#include "Utils.hpp"
-#include "App.hpp"
-#include "Log.hpp"
-
 #include <algorithm>
 #include <numeric>
 #include <functional>
 
 #include <opencv2/features2d.hpp>
 #include <opencv2/calib3d.hpp>
+
+#include "Utils.hpp"
+#include "App.hpp"
+#include "Log.hpp"
+#include "Game.hpp"
 
 namespace aic
 {
@@ -341,15 +342,54 @@ void VR::processFrame(CapturedFrame& cframe)
 
     if (corners.empty()) return;
 
-    cv::Mat dst;
-    warpBoard(corners, frame, dst);
+    cv::Mat warped;
+    warpBoard(corners, frame, warped);
 
-    //
-
-    // split and
+    // calculate whiteness and canny for each field
+    cv::Mat wBlur, grey;
+    cv::cvtColor(warped, grey, cv::COLOR_BGR2GRAY);
+    cv::GaussianBlur(warped, wBlur, cv::Size(3,3), 0);
+    
     cv::Mat cannys;
-    cv::Canny(dst, cannys, 20, 100);
+    cv::Canny(wBlur, cannys, 20, 100);
 
+    
+    for (int i = 0; i < 9; i++) {
+        auto p = i * SQS;
+        
+        cv::line(grey, cv::Point(0, p), cv::Point(BS, p), cv::Scalar(0), 10);
+        cv::line(grey, cv::Point(p, 0), cv::Point(p, BS), cv::Scalar(0), 10);
+        cv::line(cannys, cv::Point(0, p), cv::Point(BS, p), cv::Scalar(0), 10);
+        cv::line(cannys, cv::Point(p, 0), cv::Point(p, BS), cv::Scalar(0), 10);
+    }
+    
+    
+//    if (cframe.request != VRRequest::NONE)
+    {
+        GameState gs;
+        
+        // calculate square values
+        cv::Mat sq;
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                sq = grey(cv::Rect(j * SQS, i * SQS, SQS, SQS));
+                gs.whiteness[i * 8 + j].position = i * 8 + j;
+                gs.whiteness[i * 8 + j].value = calcWhiteness(sq);
+                
+                sq = cannys(cv::Rect(j * SQS, i * SQS, SQS, SQS));
+                gs.lines[i * 8 + j].position = i * 8 + j;
+                gs.lines[i * 8 + j].value = cv::countNonZero(sq);
+            }
+        }
+        
+        
+        
+        
+        // push to game state
+        
+    }
+    
+    app.show("GR", grey);
     app.show("WC", cannys);
 
 }

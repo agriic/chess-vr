@@ -19,6 +19,8 @@ set(Sources
         src/main.cpp
         src/App.cpp
         src/App.hpp
+        src/Game.cpp
+        src/Game.hpp
         src/VR.cpp
         src/VR.hpp
         src/VideoInput.cpp
