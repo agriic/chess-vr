@@ -1,32 +1,34 @@
-#include "Recorder.h"
+#include "Recorder.hpp"
 #include <fstream>
 #include <time.h>
 #include <chrono>
 #include <string>
 #include "Log.hpp"
 
-Recorder::Recorder()
+namespace aic {
+
+aic::Recorder::Recorder()
 {
     outfile.open("game.pgn");
     aic::Log(aic::DBG) << "Opened file for writing.";
 }
 
-void Recorder::writeTagsInteractive()
+void aic::Recorder::writeTagsInteractive()
 {
     char data[100];
-    std::cout << "Please enter event name: " << std::endl;
+    Log(DBG) << "Please enter event name: ";
     std::cin >> data;
     outfile << "[Event \""
             << data
             << "\"]" << std::endl;
 
-    std::cout << "Please enter city name:" << std::endl;
+    Log(DBG) << "Please enter city name:";
     std::cin >> data;
     outfile << "[Site \"" << data << ", ";
-    std::cout << "Please enter region name:" << std::endl;
+    Log(DBG) << "Please enter region name:";
     std::cin >> data;
     outfile << data << " ";
-    std::cout << "Please center country code:" << std::endl;
+    Log(DBG) << "Please center country code:";
     std::cin >> data;
     outfile << data << "\"]" << std::endl;
 
@@ -43,28 +45,30 @@ void Recorder::writeTagsInteractive()
 
     outfile << "[Round \"29\"]" << std::endl;
 
-    std::cout << "Please enter WHITE player's name in format: Surname, Name" << std::endl;
+    Log(DBG) << "Please enter WHITE player's name in format: Surname, Name";
     std::cin >> data;
     outfile << "[White \"" << data << "\"]" << std::endl;
 
-    std::cout << "Please enter BLACK player's name in format: Surname, Name" << std::endl;
+    Log(DBG) << "Please enter BLACK player's name in format: Surname, Name";
     std::cin >> data;
     outfile << "[Black \"" << data << "\"]" << std::endl;
 
-    std::cout << "Please enter round result:" << std::endl;
+    Log(DBG) << "Please enter round result:";
     std::cin >> data;
     outfile << "[Result \"" << data << "\"]" << std::endl;
 
     outfile << std::endl << std::endl;
 }
 
-std::string Recorder::getMoveText()
+std::string aic::Recorder::getMoveText()
 {
     return moveText;
 }
 
-Recorder::~Recorder()
+aic::Recorder::~Recorder()
 {
     outfile.close();
     aic::Log(aic::DBG) << "File closed";
+}
+
 }

@@ -4,9 +4,9 @@
 #ifndef CHESS_VR_RECORDER_H
 #define CHESS_VR_RECORDER_H
 
-
+namespace aic
+{
 class Recorder {
-
 
 public:
     Recorder();
@@ -32,6 +32,7 @@ private:
     std::ofstream outfile;
     std::string moveText;
 };
-
+    
+}
 
 #endif //CHESS_VR_RECORDER_H

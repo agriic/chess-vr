@@ -3,7 +3,8 @@
 #ifndef CHESS_VR_CHESS_HPP
 #define CHESS_VR_CHESS_HPP
 
-
+namespace aic
+{
 class Piece {
 
 public:
@@ -127,6 +128,7 @@ private:
     std::vector<Piece> boardState;
 
 };
-
+    
+}
 
 #endif //CHESS_VR_CHESS_HPP

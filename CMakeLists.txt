@@ -28,7 +28,7 @@ set(Sources
         src/Utils.hpp
         src/Log.cpp
         src/Log.hpp
-        src/Chess.hpp src/Chess.cpp src/Recorder.cpp src/Recorder.h)
+        src/Chess.hpp src/Chess.cpp src/Recorder.cpp src/Recorder.hpp)
 
 set(CMAKE_CXX_STANDARD 14)
 

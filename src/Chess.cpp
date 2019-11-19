@@ -1,9 +1,12 @@
 #include "Chess.hpp"
 #include <utility>
 
-Board::Board() = default;
+namespace aic
+{
 
-Piece::Piece(Type t, Piece::Color col, char colum, int lvl)
+aic::Board::Board() = default;
+
+aic::Piece::Piece(Type t, Piece::Color col, char colum, int lvl)
 {
     this->type = t;
     this->color = col;
@@ -11,39 +14,39 @@ Piece::Piece(Type t, Piece::Color col, char colum, int lvl)
     this->level = lvl;
 }
 
-void Piece::setPieceType(Piece::Type t)
+void aic::Piece::setPieceType(Piece::Type t)
 {
     type = t;
 }
 
-void Piece::setPieceColor(Piece::Color col)
+void aic::Piece::setPieceColor(Piece::Color col)
 {
     color = col;
 }
 
-void Piece::setPieceColumn(char colum)
+void aic::Piece::setPieceColumn(char colum)
 {
     column = colum;
 }
 
-void Piece::setPieceLevel(int lvl)
+void aic::Piece::setPieceLevel(int lvl)
 {
     level = lvl;
 }
 
-void Board::addPiece(Piece piece)
+void aic::Board::addPiece(Piece piece)
 {
     boardState.push_back(piece);
 }
 
-void Board::addPieces(const std::vector<Piece>& pieces)
+void aic::Board::addPieces(const std::vector<Piece>& pieces)
 {
     for (auto piece : pieces) {
         boardState.push_back(piece);
     }
 }
 
-void Board::setDefaultBoardState()
+void aic::Board::setDefaultBoardState()
 {
     // Populate with pawns for white and black.
     for (int i = 'A'; i < 'I'; ++i)
@@ -78,19 +81,22 @@ void Board::setDefaultBoardState()
     addPiece(Piece(Piece::Type::KING, Piece::Color::BLACK, 'E', 1));
 }
 
-int Board::getChessBoardPieceCount()
+int aic::Board::getChessBoardPieceCount()
 {
     return boardState.size();
 }
 
-Piece Board::getPieceByIndex(int index)
+aic::Piece aic::Board::getPieceByIndex(int index)
 {
     return boardState.at(index);
 }
 
-std::vector<Piece> Board::getBoardState()
+std::vector<aic::Piece> aic::Board::getBoardState()
 {
     return boardState;
 }
 
-Board::~Board() = default;
+aic::Board::~Board() = default;
+
+}
+
