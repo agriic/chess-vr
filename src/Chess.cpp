@@ -6,32 +6,19 @@ namespace aic
 
 aic::Board::Board() = default;
 
-aic::Piece::Piece(Type t, Piece::Color col, char colum, int lvl)
-{
-    this->type = t;
-    this->color = col;
-    this->column = colum;
-    this->level = lvl;
-}
-
-void aic::Piece::setPieceType(Piece::Type t)
+aic::Piece::Piece(Type t, Piece::Color col, char file, int rank)
 {
     type = t;
-}
-
-void aic::Piece::setPieceColor(Piece::Color col)
-{
     color = col;
+    this->file = file;
+    this->rank = rank;
 }
 
-void aic::Piece::setPieceColumn(char colum)
-{
-    column = colum;
-}
 
-void aic::Piece::setPieceLevel(int lvl)
+void aic::Piece::setPiecePos(char file, int rank)
 {
-    level = lvl;
+    this->file = file;
+    this->rank = rank;
 }
 
 void aic::Board::addPiece(Piece piece)
@@ -68,17 +55,17 @@ void aic::Board::setDefaultBoardState()
     addPiece(Piece(Piece::Type::KING, Piece::Color::WHITE, 'E', 1));
 
     /* Black pieces */
-    addPiece(Piece(Piece::Type::ROOK, Piece::Color::BLACK, 'A', 1));
-    addPiece(Piece(Piece::Type::ROOK, Piece::Color::BLACK, 'H', 1));
+    addPiece(Piece(Piece::Type::ROOK, Piece::Color::BLACK, 'A', 8));
+    addPiece(Piece(Piece::Type::ROOK, Piece::Color::BLACK, 'H', 8));
 
-    addPiece(Piece(Piece::Type::KNIGHT, Piece::Color::BLACK, 'B', 1));
-    addPiece(Piece(Piece::Type::KNIGHT, Piece::Color::BLACK, 'G', 1));
+    addPiece(Piece(Piece::Type::KNIGHT, Piece::Color::BLACK, 'B', 8));
+    addPiece(Piece(Piece::Type::KNIGHT, Piece::Color::BLACK, 'G', 8));
 
-    addPiece(Piece(Piece::Type::BISHOP, Piece::Color::BLACK, 'C', 1));
-    addPiece(Piece(Piece::Type::BISHOP, Piece::Color::BLACK, 'F', 1));
+    addPiece(Piece(Piece::Type::BISHOP, Piece::Color::BLACK, 'C', 8));
+    addPiece(Piece(Piece::Type::BISHOP, Piece::Color::BLACK, 'F', 8));
 
-    addPiece(Piece(Piece::Type::QUEEN, Piece::Color::BLACK, 'D', 1));
-    addPiece(Piece(Piece::Type::KING, Piece::Color::BLACK, 'E', 1));
+    addPiece(Piece(Piece::Type::QUEEN, Piece::Color::BLACK, 'D', 8));
+    addPiece(Piece(Piece::Type::KING, Piece::Color::BLACK, 'E', 8));
 }
 
 int aic::Board::getChessBoardPieceCount()

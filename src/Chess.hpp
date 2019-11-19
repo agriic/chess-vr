@@ -24,62 +24,38 @@ public:
     explicit Piece(Type t, Color col, char colum, int lvl);
 
     /*
-     * Set the piece Type.
-     *
-     * @param t Piece Type (KING, QUEEN ...).
-     * @return void.
-     */
-    void setPieceType(Type t);
-
-    /*
-     * Set the piece Color.
-     *
-     * @param col Piece Color (WHITE | BLACK).
-     * @return void.
-     */
-    void setPieceColor(Color col);
-
-    /*
-     * Set the piece column location.
+     * Set the piece location.
      *
      * @param colum char letter (A-H).
      * @return void.
      */
-    void setPieceColumn(char colum);
-
-    /*
-     * Set the piece level location.
-     *
-     * @param lvl Level (row) as int (1-8).
-     * @return void.
-     */
-    void setPieceLevel(int lvl);
+    void setPiecePos(char file, int rank);
 
     Piece::Type getPieceType()
     {
-        return this->type;
+        return type;
     }
 
     Piece::Color getPieceColor()
     {
-        return this->color;
+        return color;
     }
 
-    char getPieceCol()
+    char getPieceFile()
     {
-        return this->column;
+        return file;
     }
 
-    int getPieceLvl()
+    int getPieceRank()
     {
-        return this->level;
+        return rank;
     }
 
 private:
     Piece::Type type;
     Piece::Color color;
-    char column;
-    int level;
+    char file;
+    int rank;
 };
 
 class Board {
