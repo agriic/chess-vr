@@ -1,5 +1,6 @@
 #include "App.hpp"
 #include "Utils.hpp"
+#include "Chess.hpp"
 
 #include "Log.hpp"
 
@@ -19,6 +20,7 @@ void App::run()
     VRRequest action = VRRequest::NONE;
     bool stop = false;
     while (!stop) {
+
         if (video.getFrame(f)) {
             vr.pushFrame(f);
 
@@ -27,6 +29,7 @@ void App::run()
                 cv::imshow("Logs", f.frame);
             }
         }
+
 
         {
             FrameToShow poppedValue;

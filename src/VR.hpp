@@ -32,11 +32,15 @@ private:
 
     std::vector<cv::Point2f> findCorners(cv::Mat& frame);
 
-    bool findOrthogonals(std::vector<cv::Vec2f>& lines);
+    static bool findOrthogonals(std::vector<cv::Vec2f>& lines);
 
     void warpBoard(std::vector<cv::Point2f>& croners, cv::Mat& source, cv::Mat& out, bool rotationSearch = false);
 
     void findRotation(cv::Mat& warpedImage);
+
+    void boardCell(cv::Mat& src, cv::Mat& dst, char column, int lvl);
+
+    static bool cellHasPiece(cv::Mat &src, int thresh);
 
 private:
     App& app;
