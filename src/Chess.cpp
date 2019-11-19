@@ -28,9 +28,7 @@ void aic::Board::addPiece(Piece piece)
 
 void aic::Board::addPieces(const std::vector<Piece>& pieces)
 {
-    for (auto piece : pieces) {
-        boardState.push_back(piece);
-    }
+    boardState.insert(boardState.end(), pieces.begin(), pieces.end());
 }
 
 void aic::Board::setDefaultBoardState()
