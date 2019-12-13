@@ -5,7 +5,7 @@
 namespace aic
 {
 
-bool aic::Game::isMoveValid(aic::Piece& piece, char& dst_file, int& dst_rank)
+bool aic::Game::isMoveValid(aic::Piece piece, char dst_file, int dst_rank)
 {
     /* Validate if the destination position does not go beyond board borders. */
     if (dst_file > 'H' || dst_file < 'A' || dst_rank < 1 || dst_rank > 8) {
@@ -74,17 +74,17 @@ bool aic::Game::isMoveValid(aic::Piece& piece, char& dst_file, int& dst_rank)
  x = (a, b) ;y = (c, d) ;
  dst = |a - c| + |b - d|
  */
-int aic::Game::calcManhattanDist(char& a, int& b, char& c, int& d)
+int aic::Game::calcManhattanDist(char a, int b, char c, int d)
 {
      return (int)abs(a - c) + abs(b - d);
 }
 
-bool aic::Game::onDiagonal(char &a, int &b, char &c, int &d)
+bool aic::Game::onDiagonal(char a, int b, char c, int d)
 {
     return ((int)abs(a - c) == abs(b - d));
 }
 
-bool aic::Game::onOrthogonal(char &a, int &b, char &c, int &d)
+bool aic::Game::onOrthogonal(char a, int b, char c, int d)
 {
     // either rank is equal or the file is equal
     return (a == c || b == d);

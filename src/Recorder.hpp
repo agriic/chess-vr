@@ -30,22 +30,20 @@ public:
      */
     void writeTagsInteractive();
     
-    void addPly(aic::Piece piece, char dst_file, int dst_rank, bool capture);
+    void addPly(aic::Piece piece, char dst_file, int dst_rank, bool capture); //pushes a ply to a move
     void setTempWhitePly(std::string ply);
     void setTempBlackPly(std::string ply);
+    
     void makeMoveText();
-    void dumpMoveText();
+    void dumpMoveText(); // serializes the built moveText to the output file stream
     
 private:
-    
-    
-    
     int currentMove;
     
-    Move tempMove;
-    std::ofstream outfile;
-    std::vector<Move> moves;
-    std::string moveText;
+    Move tempMove; // temporary Move used for filling with ply values, pushed to moves when both plys are filled
+    std::ofstream outfile; // output file stream for writing tags and moveText
+    std::vector<Move> moves; // vector for storing moves
+    std::string moveText; // string of entire complete moveText for the game
     
     /**
         Append a new move to moveText.

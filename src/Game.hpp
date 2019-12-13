@@ -29,7 +29,7 @@ public:
     
     void pushFrame(GameState& frame);
     /* Returns the validity of a move */
-    bool isMoveValid(aic::Piece& piece, char& file, int& rank);
+    bool isMoveValid(aic::Piece piece, char file, int rank);
     
     /**
      
@@ -53,7 +53,7 @@ public:
     @param d Destination rank.
     @return Manhattan distance.
      */
-    int calcManhattanDist(char& a, int& b, char& c, int& d);
+    int calcManhattanDist(char a, int b, char c, int d);
 
 private:
 
@@ -68,7 +68,7 @@ private:
      @return Boolean true if on diagonal, false otherwise.
      
      */
-    bool onDiagonal(char& a, int& b, char& c, int& d);
+    bool onDiagonal(char a, int b, char c, int d);
     
     /**
      Find out if two positions are on one of two possible orthogonals (horizontal or vertical).
@@ -80,9 +80,7 @@ private:
      @return Boolean true if on orthogonal, false otherwise.
      
      */
-    bool onOrthogonal(char& a, int& b, char& c, int& d);
-    
-    
+    bool onOrthogonal(char a, int b, char c, int d);
     
     void run();
     
