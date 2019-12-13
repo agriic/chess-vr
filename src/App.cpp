@@ -7,7 +7,7 @@
 namespace aic
 {
 
-App::App(const std::string& path) : video(path), vr(*this), game(*this)
+App::App(const std::string& path) : video(path), vr(*this)
 {
 
 }
@@ -17,16 +17,27 @@ void App::run()
     CapturedFrame f;
     cv::Mat toShow;
 
+    cv::namedWindow("Logs");
+    cv::moveWindow("Logs", 0,0);
+    cv::namedWindow("GR");
+    cv::moveWindow("GR", 640,0);
+    cv::namedWindow("WC");
+    cv::moveWindow("WC", 1160,0);
+    
     VRRequest action = VRRequest::NONE;
     bool stop = false;
     while (!stop) {
 
         if (video.getFrame(f)) {
+            f.request = action;
             vr.pushFrame(f);
+            action = VRRequest::NONE;
 
             // TODO: show something resized - small
             if (f.frameNumber % 2 == 1) {
-                cv::imshow("Logs", f.frame);
+                cv::Mat resized;
+                cv::resize(f.frame, resized, cv::Size(f.frame.cols / 2, f.frame.rows / 2));
+                cv::imshow("Logs", resized);
             }
         }
 
@@ -41,11 +52,12 @@ void App::run()
             switch (key) {
                 case ' ':
                     action = VRRequest::MOVE;
-                    Log(DBG) << "Move";
+                    Log(DBG) << "Move Req";
                     break;
                 case 's':
                     action = VRRequest::GAME_START;
-                    Log(DBG) << "Game Start";
+                    Log(DBG) << "Game Start Req";
+                    break;
                 case 27: // ESC
                 case 'q':
                     stop = true;

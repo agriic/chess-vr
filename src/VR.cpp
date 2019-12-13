@@ -40,8 +40,12 @@ void VR::run()
 
 void VR::pushFrame(CapturedFrame& frame)
 {
-    if (!frames.push(frame, MAX_QUEUED_FRAMES)) {
-//        LOG->warn("VR queue size limit reached. Frame skipped.");
+    if (frame.request != VRRequest::NONE) {
+        // TODO: save frame
+        frames.push(frame);
+    } else {
+        frames.push(frame, MAX_QUEUED_FRAMES);
+        //        LOG->warn("VR queue size limit reached. Frame skipped.");
     }
 }
 
@@ -345,18 +349,41 @@ bool VR::cellHasPiece(cv::Mat &src, int thresh=150)
     return cv::countNonZero(roi) > thresh;
 }
 
+static std::string p(int pos) {
+    std::string rez = "[";
+    rez += (char)('A' + (pos % 8));
+    rez += std::to_string(8 - (pos / 8));
+    rez += "]";
+    
+    return rez;
+}
+
 void VR::processFrame(CapturedFrame& cframe)
 {
     if (cframe.frame.empty()) return;
 
+    if (cframe.request != VRRequest::NONE) {
+        currentRequest = cframe.request;
+    }
+    
+    if (currentRequest == VRRequest::NONE) return;
+    
     cv::Mat& frame = cframe.frame;
 
     cv::Mat blurred;
     cv::GaussianBlur(frame, blurred, cv::Size(3,3), 0);
-
-    auto corners = findCorners(blurred);
-
+    
+    if (currentRequest == VRRequest::GAME_START
+        || (currentRequest == VRRequest::MOVE && gameStates.empty()))
+    {
+        // it will be 3 frame aggregate in the end
+        corners = findCorners(blurred);
+        // TODO: call game -> start
+        
+    }
+    
     if (corners.empty()) return;
+    
 
     cv::Mat warped;
     warpBoard(corners, frame, warped);
@@ -364,6 +391,12 @@ void VR::processFrame(CapturedFrame& cframe)
     // calculate whiteness and canny for each field
     cv::Mat wBlur, grey;
     cv::cvtColor(warped, grey, cv::COLOR_BGR2GRAY);
+    
+    cv::Mat bgr[3];   //destination array
+    split(warped, bgr);//split source
+    
+    grey = bgr[2];
+    
     cv::GaussianBlur(warped, wBlur, cv::Size(3,3), 0);
     
     cv::Mat cannys;
@@ -379,29 +412,208 @@ void VR::processFrame(CapturedFrame& cframe)
         cv::line(cannys, cv::Point(p, 0), cv::Point(p, BS), cv::Scalar(0), 10);
     }
     
+    // aggregate 3 frames with cannys?
+    if (currentRequest != VRRequest::NONE) {
+        if (agCanny.empty()) {
+            agCanny = cannys;
+        } else {
+            cv::bitwise_or(agCanny, cannys, agCanny);
+            agCount++;
+        }
+    }
     
-//    if (cframe.request != VRRequest::NONE)
+    if (currentRequest != VRRequest::NONE && agCount > 1)
     {
+//        cv::Canny(agCanny, cannys, 20, 100);
+        
         GameState gs;
         
         // calculate square values
         cv::Mat sq;
+        
+        std::string ll = "\n";
+        
+        std::string avs = "\n";
+        
         for (int i = 0; i < 8; i++) {
+
             for (int j = 0; j < 8; j++) {
                 sq = grey(cv::Rect(j * SQS, i * SQS, SQS, SQS));
                 gs.whiteness[i * 8 + j].position = i * 8 + j;
                 gs.whiteness[i * 8 + j].value = calcWhiteness(sq);
-                
-                sq = cannys(cv::Rect(j * SQS, i * SQS, SQS, SQS));
+//
+                sq = agCanny(cv::Rect(j * SQS, i * SQS, SQS, SQS));
                 gs.lines[i * 8 + j].position = i * 8 + j;
                 gs.lines[i * 8 + j].value = cv::countNonZero(sq);
+                
+                char v[8];
+                sprintf(v, "%3d ", gs.lines[i * 8 + j].value);
+                avs += v;
+                
+                sprintf(v, "%3d ", gs.whiteness[i * 8 + j].value);
+                ll += v;
             }
+            ll += "\n";
+            avs += "\n";
         }
         
+        Log(DBG) << "\n" << ll;
+        Log(DBG) << "\n" << avs;
         
+        if (currentRequest == VRRequest::GAME_START
+            || (currentRequest == VRRequest::MOVE && gameStates.empty()))
+        {
+            gameStates.clear();
+            gameStates.push_back(std::move(gs));
+            Log(DBG) << "Game start";
+            
+            for (int i = 0; i < 16; i++) {
+                takenSquares[i] = 2; // black
+                takenSquares[63 - i] = 1; // white
+            }
+            for (int i = 16; i < 32; i++) {
+                takenSquares[i] = 0; // none
+                takenSquares[63 - i] = 0; // none
+            }
+            whitesMove = true;
+            
+            // TODO: call game -> start
+            
+        } else if (currentRequest == VRRequest::MOVE) {
+            
+            // find move
+            // calculate differences with previous state
+            GameState diffs;
+            const auto& last = gameStates.back();
+            
+            for (int i = 0; i < 64; i++) {
+                
+                diffs.lines[i].position = gs.lines[i].position;
+                diffs.whiteness[i].position = gs.whiteness[i].position;
+                
+                diffs.lines[i].value = abs(gs.lines[i].value - last.lines[i].value);
+                diffs.whiteness[i].value = abs(gs.whiteness[i].value - last.whiteness[i].value);
+            }
+            
+            std::sort(diffs.lines, diffs.lines + 64, [](SquareVR& a, SquareVR& b) {
+                return a.value > b.value;
+            });
+            
+            std::sort(diffs.whiteness, diffs.whiteness + 64, [](SquareVR& a, SquareVR& b) {
+                return a.value > b.value;
+            });
+            
+            // push it to game. if game says it is valid, push it into states
+            
+            // TODO: should check for castling
+            
+            // last lines is from where it came
+            // going in order of biggest changes
+            int from = diffs.lines[63].position;
+            for (int i = 0; i < 64; i++) {
+                
+                auto& ls = last.lines[diffs.lines[i].position];
+                auto& cs = gs.lines[diffs.lines[i].position];
+                
+                Log(DBG) << "Try FR " << ls.value << " " << cs.value;
+                
+                // white is taken by black on black square?
+                // sq should be taken by correct color piece
+                // TODO: castling
+                if (takenSquares[diffs.lines[i].position] == (whitesMove ? 1 : 2)
+                    && cs.value < 150 && diffs.lines[i].value > ls.value * 0.5)
+                {
+                    from = diffs.lines[i].position;
+                    Log(DBG) << "FR " << p(from);
+                    break;
+                }
+            }
+            
+            int to = -1;
+            
+            // should start with whiteness changes?
+            // TODO: castling
+            Log(DBG) << diffs.whiteness[0].value << p(diffs.whiteness[0].position) << " " << diffs.whiteness[1].value << p(diffs.whiteness[1].position) << " " << diffs.whiteness[2].value << p(diffs.whiteness[2].position);
+            
+            for (int i = 0; i < 64; i++) {
+                if (diffs.whiteness[i].position == from) continue;
+                
+                if (diffs.whiteness[i].value > 35) // should be change
+                {
+                    to = diffs.whiteness[i].position;
+                    Log(DBG) << "To Detected by whiteness";
+                } else break;
+            }
+            
+            if (to == -1) { // not detected by whiteness
+                
+                for (int i = 0; i < 64; i++) {
+                    // move should be to free sq
+                    // takes should be detected by whiteness detection
+                    if (takenSquares[diffs.lines[i].position] == (whitesMove ? 1 : 2)) continue;
+                    
+                    // is change big enough?
+                    // whiteness check can be included
+                    if (diffs.lines[i].value > 70) {
+                        to = diffs.lines[i].position;
+                        break;
+                    }
+                }
+            }
+            
+            if (from >= 0 && to >= 0) {
+                //            char ff = 'A' + (from % 8);
+                //            char tf = 'A' + (to % 8);
+                //            int fr = 8 - (from / 8);
+                //            int tr = 8 - (to / 8);
+                            
+                            Log(DBG) << gameStates.size() + 1 << " MOVE >> " << p(from) << " -> " << p(to);
+                            Log(DBG)
+                            << diffs.lines[63].value << p(diffs.lines[63].position) << " "
+                            << diffs.lines[62].value << p(diffs.lines[62].position) << " "
+                            << diffs.lines[1].value << p(diffs.lines[1].position) << " "
+                            << diffs.lines[0].value << p(diffs.lines[0].position);
+                            
+                            
+                            gameStates.push_back(std::move(gs));
+                            // first can be to where if absolute change is big enough. otherwise needs to check whiteness
+                            
+                            takenSquares[from] = 0;
+                            takenSquares[to] = (whitesMove ? 1 : 2);
+                            
+                            whitesMove = !whitesMove;
+                
+                std::string B;
+                for (int i = 0; i < 8; i++) {
+                    for (int j = 0; j < 8; j++) {
+                        if (takenSquares[i * 8 + j] == 2) {
+                            B += "B ";
+                        } else if (takenSquares[i * 8 + j] == 1) {
+                            B += "W ";
+                        } else {
+                            B += ". ";
+                        }
+                    }
+                    B += "\n";
+                }
+                Log(DBG) << "\n" << B;
+                
+            } else {
+                Log(ERR) << gameStates.size() + 1 << " -> Can no decide on move!!!";
+            }
+                
+
+        }
         
+        // save everything
+        auto no = std::to_string(gameStates.size());
+        cv::imwrite("1_" + no + "_canny.png", cannys);
+        cv::imwrite("2_" + no + "_orig.png", cframe.frame);
+//        cv::imwrite(no + "_bw.png", grey);
         
-        // push to game state
+        currentRequest = VRRequest::NONE;
+        agCount = 0;
+        agCanny = cv::Mat();
         
     }
     

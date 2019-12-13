@@ -8,18 +8,6 @@
 
 namespace aic
 {
-struct SquareVR
-{
-    uint32_t value;
-    uint32_t position;
-};
-struct GameState
-{
-    SquareVR whiteness[64];
-    SquareVR lines[64];
-    
-    VRRequest request;
-};
 
 class Game
 {
@@ -86,10 +74,6 @@ private:
     
 private:
     App& app;
-
-    std::atomic_bool stoped;
-    std::thread th;
-
-    ConcurrentQueue<GameState> frames;
 };
+
 }
