@@ -136,6 +136,19 @@ void aic::Recorder::setTempBlackPly(std::string ply)
     tempMove.blackPly = ply;
 }
 
+void aic::Recorder::makeMoveText()
+{
+    for (auto & move : moves) {
+        moveText += move.moveNo + ". " + move.whitePly + " " + move.blackPly + " ";
+    }
+}
+
+void aic::Recorder::dumpMoveText()
+{
+    outfile << moveText;
+}
+
+
 aic::Recorder::~Recorder()
 {
     outfile.close();

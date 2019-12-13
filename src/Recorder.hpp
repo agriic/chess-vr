@@ -33,6 +33,8 @@ public:
     void addPly(aic::Piece piece, char dst_file, int dst_rank, bool capture);
     void setTempWhitePly(std::string ply);
     void setTempBlackPly(std::string ply);
+    void makeMoveText();
+    void dumpMoveText();
     
 private:
     
