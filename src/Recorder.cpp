@@ -82,8 +82,7 @@ void aic::Recorder::addPly(aic::Piece piece, char dst_file, int dst_rank, bool c
     if (aic::Game::canCastleBasic(src_file, src_rank, dst_file, dst_rank))
     {
         std::string castlePly;
-        if (dst_file == 'C') {
-            castlePly = "O-O-O"; // queenside
+        if (dst_file == 'C') { castlePly = "O-O-O"; // queenside
         } else castlePly = "O-O"; // kingside
         
         if (piece.getPieceColor() == aic::Piece::Color::WHITE)

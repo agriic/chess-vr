@@ -10,7 +10,7 @@ bool aic::Game::isMoveValid(aic::Piece piece, char dst_file, int dst_rank)
     /* Validate if the destination position does not go beyond board borders. */
     if (dst_file > 'H' || dst_file < 'A' || dst_rank < 1 || dst_rank > 8) {
         Log(DBG) << "Invalid destination position: "
-        << dst_file << " " << dst_rank;
+                 << dst_file << " " << dst_rank;
         return false;
     }
     else
@@ -20,7 +20,6 @@ bool aic::Game::isMoveValid(aic::Piece piece, char dst_file, int dst_rank)
         
         switch (piece.getPieceType())
         {
-            
             case Piece::Type::PAWN: {
                 /* Check cases for both pawn colors. */
                 switch (piece.getPieceColor())
@@ -94,17 +93,13 @@ bool aic::Game::canCastleBasic(char a, int b, char c, int d)
 {
     aic::Piece::Color color;
     
-    if (b <= 4) {
-        color = aic::Piece::Color::WHITE;
-    } else color = aic::Piece::Color::BLACK;
+    if (b <= 4) { color = aic::Piece::Color::WHITE; } else color = aic::Piece::Color::BLACK;
     
     switch (color)
     {
         case Piece::Color::WHITE: {
-            if (b == 1 && d == 1)
-            {
-                return (abs(a - c) == 2);
-            } else return false;
+            return (b == 1 && d == 1) && (abs(a - c) == 2);
+            
             break;
         }
             
