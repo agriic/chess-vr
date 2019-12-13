@@ -99,15 +99,11 @@ bool aic::Game::canCastleBasic(char a, int b, char c, int d)
     {
         case Piece::Color::WHITE: {
             return (b == 1 && d == 1) && (abs(a - c) == 2);
-            
             break;
         }
             
         case Piece::Color::BLACK: {
-            if (b == 8 && d == 8)
-            {
-                return (abs(a - c) == 2);
-            } else return false;
+            return (b == 8 && d == 8) && (abs(a - c) == 2);
             break;
         }
     }
