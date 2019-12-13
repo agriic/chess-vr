@@ -27,7 +27,7 @@ private:
 
     VideoInput video;
     VR vr;
-    Game game;
+//    Game game;
 
     ConcurrentQueue<FrameToShow> imagesToShow;
 };

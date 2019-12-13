@@ -7,6 +7,19 @@ namespace aic
 {
 class App;
 
+struct SquareVR
+{
+    int value;
+    int position;
+};
+struct GameState
+{
+    SquareVR whiteness[64];
+    SquareVR lines[64];
+    
+    VRRequest request;
+};
+
 class VR
 {
     struct Line {
@@ -51,5 +64,16 @@ private:
     ConcurrentQueue<CapturedFrame> frames;
 
     int rotation = -1;
+    
+    std::vector<GameState> gameStates;
+    
+    cv::Mat agCanny;
+    uint32_t agCount = 0;
+    VRRequest currentRequest = VRRequest::NONE;
+    
+    std::vector<cv::Point2f> corners;
+    
+    int takenSquares[64];
+    bool whitesMove = true;
 };
 }

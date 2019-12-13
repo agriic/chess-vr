@@ -120,6 +120,16 @@ public:
 
         return *this;
     }
+    
+    Log &operator<<(const char val)
+    {
+        if (l.level <= threshold)
+        {
+            l.s += val;
+        }
+
+        return *this;
+    }
 
 private:
     void flush();
