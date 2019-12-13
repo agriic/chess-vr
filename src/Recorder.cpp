@@ -4,13 +4,18 @@
 #include <chrono>
 #include <string>
 #include "Log.hpp"
+#include "Game.hpp"
 
-namespace aic {
+namespace aic
+{
 
 aic::Recorder::Recorder()
 {
     outfile.open("game.pgn");
     aic::Log(aic::DBG) << "Opened file for writing.";
+    currentMove = 1;
+    tempMove.whitePly = std::string(NULL);
+    tempMove.blackPly = std::string(NULL);
 }
 
 void aic::Recorder::writeTagsInteractive()
@@ -57,12 +62,78 @@ void aic::Recorder::writeTagsInteractive()
     std::cin >> data;
     outfile << "[Result \"" << data << "\"]" << std::endl;
 
-    outfile << std::endl << std::endl;
+    outfile << std::endl; // add a new line before writing moveText
 }
 
-std::string aic::Recorder::getMoveText()
+void aic::Recorder::addMove(Move move)
 {
-    return moveText;
+    move.moveNo = std::to_string(currentMove) + ".";
+    moves.push_back(move); // push completed move to vector (both plys are filled)
+    ++currentMove;
+}
+
+void aic::Recorder::addPly(aic::Piece piece, char dst_file, int dst_rank, bool capture)
+{
+    std::string pc; // piece type as single char string
+    
+    char src_file = piece.getPieceFile();
+    int src_rank = piece.getPieceRank();
+    
+    if (aic::Game::canCastleBasic(src_file, src_rank, dst_file, dst_rank))
+    {
+        // TODO: Implemet handing of castling
+        // implement logic for deciding if queenside or kingside castle or not
+        
+    } else {
+        switch (piece.getPieceType())
+            {
+                
+                case Piece::Type::KNIGHT: {
+                    pc = "N";
+                    break;
+                }
+                case Piece::Type::BISHOP: {
+                    pc = "B";
+                    break;
+                }
+                case Piece::Type::ROOK: {
+                    pc = "R";
+                    break;
+                }
+                case Piece::Type::QUEEN: {
+                    pc = "Q";
+                    break;
+                }
+                default:
+                    break;
+            }
+        std::string ply(pc);
+        if (capture) ply += "x";
+        
+        ply += tolower(dst_file);
+        ply += std::to_string(dst_rank);
+        
+        if (piece.getPieceColor() == aic::Piece::Color::WHITE)
+        {
+            setTempWhitePly(ply);
+        } else {
+            setTempBlackPly(ply);
+            addMove(tempMove);
+            ++currentMove;
+        }
+        
+    }
+    
+}
+
+void aic::Recorder::setTempWhitePly(std::string ply)
+{
+    tempMove.whitePly = ply;
+}
+
+void aic::Recorder::setTempBlackPly(std::string ply)
+{
+    tempMove.blackPly = ply;
 }
 
 aic::Recorder::~Recorder()

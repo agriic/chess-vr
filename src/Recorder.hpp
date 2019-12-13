@@ -1,14 +1,23 @@
 #include <string>
 #include <fstream>
+#include <Game.hpp>
 
 #ifndef CHESS_VR_RECORDER_H
 #define CHESS_VR_RECORDER_H
 
 namespace aic
 {
-class Recorder {
 
+class Recorder
+{
+    struct Move {
+        std::string moveNo;
+        std::string whitePly;
+        std::string blackPly;
+    };
+    
 public:
+ 
     Recorder();
 
     ~Recorder();
@@ -20,17 +29,30 @@ public:
      * @return void
      */
     void writeTagsInteractive();
-    /*
-     * Get entire moveText part of the PGN to be written to file.
-     *
-     * @param void
-     * @return string of moveText moves.
-     */
-    std::string getMoveText();
-
+    
+    void addPly(aic::Piece piece, char dst_file, int dst_rank, bool capture);
+    void setTempWhitePly(std::string ply);
+    void setTempBlackPly(std::string ply);
+    
 private:
+    
+    
+    
+    int currentMove;
+    
+    Move tempMove;
     std::ofstream outfile;
+    std::vector<Move> moves;
     std::string moveText;
+    
+    /**
+        Append a new move to moveText.
+     
+        @param move Move struct
+     
+     */
+    void addMove(Move move);
+    
 };
     
 }

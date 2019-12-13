@@ -30,8 +30,20 @@ public:
     void pushFrame(GameState& frame);
     /* Returns the validity of a move */
     bool isMoveValid(aic::Piece& piece, char& file, int& rank);
-
-private:
+    
+    /**
+     
+     Find out if piece can castle by moving to destination position.
+    
+     @param a Source file.
+     @param b Source rank.
+     @param c Destination file.
+     @param d Destination rank.
+     @return Boolean if piece can castle, false otherwise.
+       
+     */
+    static bool canCastleBasic(char a, int b, char c, int d);
+    
     /**
     Calculates the manhattan distance between two chess board positions.
      
@@ -42,6 +54,9 @@ private:
     @return Manhattan distance.
      */
     int calcManhattanDist(char& a, int& b, char& c, int& d);
+
+private:
+
     
     /**
      Find out if two positions on the board are on the same diagonal.
@@ -67,19 +82,7 @@ private:
      */
     bool onOrthogonal(char& a, int& b, char& c, int& d);
     
-    /**
-     
-     Find out if piece can castle by moving to destination position.
     
-     @param color Piece color.
-     @param a Source file.
-     @param b Source rank.
-     @param c Destination file.
-     @param d Destination rank.
-     @return Boolean if piece can castle, false otherwise.
-       
-     */
-    bool canCastleBasic(aic::Piece::Color color, char& a, int& b, char& c, int& d);
     
     void run();
     

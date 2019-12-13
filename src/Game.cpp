@@ -62,7 +62,7 @@ bool aic::Game::isMoveValid(aic::Piece& piece, char& dst_file, int& dst_rank)
                 
             case Piece::Type::KING: {
                 return (calcManhattanDist(src_file, src_rank, dst_file, dst_rank) == 1 ||
-                        canCastleBasic(piece.getPieceColor(), src_file, src_rank, dst_file, dst_rank));
+                        canCastleBasic(src_file, src_rank, dst_file, dst_rank));
                 break;
             }
                 
@@ -90,8 +90,14 @@ bool aic::Game::onOrthogonal(char &a, int &b, char &c, int &d)
     return (a == c || b == d);
 }
 
-bool aic::Game::canCastleBasic(aic::Piece::Color color, char &a, int &b, char &c, int &d)
+bool aic::Game::canCastleBasic(char a, int b, char c, int d)
 {
+    aic::Piece::Color color;
+    
+    if (b <= 4) {
+        color = aic::Piece::Color::WHITE;
+    } else color = aic::Piece::Color::BLACK;
+    
     switch (color)
     {
         case Piece::Color::WHITE: {
