@@ -81,13 +81,23 @@ void aic::Recorder::addPly(aic::Piece piece, char dst_file, int dst_rank, bool c
     
     if (aic::Game::canCastleBasic(src_file, src_rank, dst_file, dst_rank))
     {
-        // TODO: Implemet handing of castling
-        // implement logic for deciding if queenside or kingside castle or not
+        std::string castlePly;
+        if (dst_file == 'C') {
+            castlePly = "O-O-O"; // queenside
+        } else castlePly = "O-O"; // kingside
+        
+        if (piece.getPieceColor() == aic::Piece::Color::WHITE)
+        {
+            setTempWhitePly(castlePly);
+        } else {
+            setTempBlackPly(castlePly);
+            addMove(tempMove);
+            ++currentMove;
+        }
         
     } else {
         switch (piece.getPieceType())
             {
-                
                 case Piece::Type::KNIGHT: {
                     pc = "N";
                     break;
@@ -107,6 +117,7 @@ void aic::Recorder::addPly(aic::Piece piece, char dst_file, int dst_rank, bool c
                 default:
                     break;
             }
+        
         std::string ply(pc);
         if (capture) ply += "x";
         
@@ -121,9 +132,7 @@ void aic::Recorder::addPly(aic::Piece piece, char dst_file, int dst_rank, bool c
             addMove(tempMove);
             ++currentMove;
         }
-        
     }
-    
 }
 
 void aic::Recorder::setTempWhitePly(std::string ply)
@@ -139,13 +148,13 @@ void aic::Recorder::setTempBlackPly(std::string ply)
 void aic::Recorder::makeMoveText()
 {
     for (auto & move : moves) {
-        moveText += move.moveNo + ". " + move.whitePly + " " + move.blackPly + " ";
+        moveText += move.moveNo + " " + move.whitePly + " " + move.blackPly + " ";
     }
 }
 
 void aic::Recorder::dumpMoveText()
 {
-    outfile << moveText;
+    outfile << moveText; // writes single movetext line to open file
 }
 
 
