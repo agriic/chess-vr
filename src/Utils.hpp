@@ -40,4 +40,5 @@ namespace aic
     bool endsWith(const std::string& str, const std::string& needle);
     bool fileExists(const std::string& name);
     float euclideanDist(cv::Point2f& p, cv::Point2f& q);
+    std::string replaceAll(const std::string& str, const std::string& from, const std::string& to);
 }

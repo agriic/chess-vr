@@ -2,6 +2,7 @@
 
 #include "ConcurrentQueue.hpp"
 #include "Utils.hpp"
+#include "Board.hpp"
 
 namespace aic
 {
@@ -75,5 +76,7 @@ private:
     
     int takenSquares[64];
     bool whitesMove = true;
+    
+    Board board;
 };
 }

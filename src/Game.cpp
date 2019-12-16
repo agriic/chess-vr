@@ -1,5 +1,5 @@
 #include "Game.hpp"
-#include "Chess.hpp"
+#include "Board.hpp"
 #include "Log.hpp"
 
 namespace aic
@@ -15,14 +15,14 @@ bool aic::Game::isMoveValid(aic::Piece piece, char dst_file, int dst_rank)
     }
     else
     {
-        char src_file = piece.getPieceFile();
-        int src_rank = piece.getPieceRank();
+        char src_file = piece.getFile();
+        int src_rank = piece.getRank();
         
-        switch (piece.getPieceType())
+        switch (piece.getType())
         {
             case Piece::Type::PAWN: {
                 /* Check cases for both pawn colors. */
-                switch (piece.getPieceColor())
+                switch (piece.getColor())
                 {
                     case Piece::Color::WHITE: {
                         return (dst_rank > src_rank);

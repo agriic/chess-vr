@@ -258,14 +258,25 @@ bool VR::findOrthogonals(std::vector<cv::Vec2f>& lines)
 double calcWhiteness(cv::Mat& gray)
 {
     double sum = 0;
+    int cnt = 0;
+    
+    int half = (gray.rows / 2);
+    int hr = (gray.rows / 2) - 4;
+    
     for( int y = 0; y < gray.rows; y++ ) {
         uint8_t* rs = &gray.at<uint8_t>(y,0);
+        
+        auto limit = hr * hr - (half - y) * (half - y);
+        
         for( int x = 0; x < gray.cols; x++ ) {
-            sum += rs[x];
+            if ((half - x) * (half - x) <= limit) {
+                sum += rs[x];
+                cnt++;
+            }
         }
     }
 
-    sum /= gray.rows * gray.cols;
+    sum /= cnt;
 
     return sum;
 }
@@ -379,7 +390,7 @@ void VR::processFrame(CapturedFrame& cframe)
         // it will be 3 frame aggregate in the end
         corners = findCorners(blurred);
         // TODO: call game -> start
-        
+        board.setDefaultBoardState();
     }
     
     if (corners.empty()) return;
@@ -389,11 +400,19 @@ void VR::processFrame(CapturedFrame& cframe)
     warpBoard(corners, frame, warped);
 
     // calculate whiteness and canny for each field
-    cv::Mat wBlur, grey;
-    cv::cvtColor(warped, grey, cv::COLOR_BGR2GRAY);
+    cv::Mat wBlur, grey, hsv;
+    
+    
+    
+//    cv::cvtColor(warped, grey, cv::COLOR_BGR2GRAY);
+    cv::cvtColor(warped, hsv, cv::COLOR_BGR2HSV);
     
     cv::Mat bgr[3];   //destination array
-    split(warped, bgr);//split source
+    split(hsv, bgr);//split source
+    
+//    app.show("P1", bgr[0]);
+//    app.show("P2", bgr[1]);
+//    app.show("P3", bgr[2]);
     
     grey = bgr[2];
     
@@ -424,8 +443,6 @@ void VR::processFrame(CapturedFrame& cframe)
     
     if (currentRequest != VRRequest::NONE && agCount > 1)
     {
-//        cv::Canny(agCanny, cannys, 20, 100);
-        
         GameState gs;
         
         // calculate square values
@@ -538,7 +555,8 @@ void VR::processFrame(CapturedFrame& cframe)
             for (int i = 0; i < 64; i++) {
                 if (diffs.whiteness[i].position == from) continue;
                 
-                if (diffs.whiteness[i].value > 35) // should be change
+                // hue changes may be better
+                if (diffs.whiteness[i].value > 30) // should be change
                 {
                     to = diffs.whiteness[i].position;
                     Log(DBG) << "To Detected by whiteness";
@@ -569,11 +587,7 @@ void VR::processFrame(CapturedFrame& cframe)
                             
                             Log(DBG) << gameStates.size() + 1 << " MOVE >> " << p(from) << " -> " << p(to);
                             Log(DBG)
-                            << diffs.lines[63].value << p(diffs.lines[63].position) << " "
-                            << diffs.lines[62].value << p(diffs.lines[62].position) << " "
-                            << diffs.lines[1].value << p(diffs.lines[1].position) << " "
-                            << diffs.lines[0].value << p(diffs.lines[0].position);
-                            
+                            << diffs.lines[0].value << p(diffs.lines[0].position) << " " << diffs.lines[1].value << p(diffs.lines[1].position);
                             
                             gameStates.push_back(std::move(gs));
                             // first can be to where if absolute change is big enough. otherwise needs to check whiteness
@@ -604,6 +618,8 @@ void VR::processFrame(CapturedFrame& cframe)
                 
 
         }
+        
+        app.show("board", board.getStateDrawing());
         
         // save everything
         auto no = std::to_string(gameStates.size());

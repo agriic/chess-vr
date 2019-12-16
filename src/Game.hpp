@@ -4,7 +4,7 @@
 
 #include "App.hpp"
 #include "Utils.hpp"
-#include "Chess.hpp"
+#include "Board.hpp"
 
 namespace aic
 {

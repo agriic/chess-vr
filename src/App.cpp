@@ -1,6 +1,5 @@
 #include "App.hpp"
 #include "Utils.hpp"
-#include "Chess.hpp"
 
 #include "Log.hpp"
 
@@ -14,15 +13,31 @@ App::App(const std::string& path) : video(path), vr(*this)
 
 void App::run()
 {
+    
+
+    
+    
+    
+    
     CapturedFrame f;
     cv::Mat toShow;
 
-    cv::namedWindow("Logs");
-    cv::moveWindow("Logs", 0,0);
     cv::namedWindow("GR");
-    cv::moveWindow("GR", 640,0);
     cv::namedWindow("WC");
-    cv::moveWindow("WC", 1160,0);
+    cv::namedWindow("Logs");
+    cv::namedWindow("board");
+    
+    
+    
+    
+    
+    
+//    cv::namedWindow("P1");
+//    cv::moveWindow("P1", 0,500);
+//    cv::namedWindow("P2");
+//    cv::moveWindow("P2", 640,500);
+//    cv::namedWindow("P3");
+//    cv::moveWindow("P3", 1160,500);
     
     VRRequest action = VRRequest::NONE;
     bool stop = false;
@@ -46,6 +61,10 @@ void App::run()
             FrameToShow poppedValue;
             while (imagesToShow.tryPop(poppedValue)) {
                 cv::imshow(poppedValue.window, poppedValue.frame);
+                cv::moveWindow("Logs", 0,0);
+                cv::moveWindow("board", 640,0);
+                cv::moveWindow("GR", 0, 500);
+                cv::moveWindow("WC", 640,500);
             }
 
             auto key = cv::waitKey(1);

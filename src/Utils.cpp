@@ -37,3 +37,15 @@ float aic::euclideanDist(cv::Point2f& p, cv::Point2f& q) {
     return cv::sqrt(diff.x*diff.x + diff.y*diff.y);
 }
 
+std::string aic::replaceAll(const std::string& str, const std::string& from, const std::string& to)
+{
+    std::string rez = str;
+    size_t start_pos = 0;
+    while((start_pos = rez.find(from, start_pos)) != std::string::npos) {
+        size_t end_pos = start_pos + from.length();
+        rez.replace(start_pos, end_pos, to);
+        start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+    }
+    
+    return rez;
+}

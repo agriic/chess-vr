@@ -1,14 +1,16 @@
-#include <vector>
+#pragma once
 
-#ifndef CHESS_VR_CHESS_HPP
-#define CHESS_VR_CHESS_HPP
+#include <vector>
+#include <map>
+#include <opencv2/core.hpp>
 
 namespace aic
 {
 class Piece {
 
 public:
-    enum class Type {
+    enum Type {
+        NO_TYPE,
         KING,
         QUEEN,
         ROOK,
@@ -16,12 +18,15 @@ public:
         KNIGHT,
         PAWN
     };
-    enum class Color {
+    enum Color {
+        NO_COLOR,
         WHITE,
         BLACK
     };
 
-    explicit Piece(Type type, Color color, char file, int rank);
+    Piece();
+    
+    Piece(Type type, Color color, char file, int rank);
 
     /*
      * Set the piece location.
@@ -31,38 +36,28 @@ public:
      */
     void setPiecePos(char file, int rank);
 
-    Piece::Type getPieceType()
-    {
-        return type;
-    }
+    Piece::Type getType() { return type; }
 
-    Piece::Color getPieceColor()
-    {
-        return color;
-    }
+    Piece::Color getColor() { return color; }
 
-    char getPieceFile()
-    {
-        return file;
-    }
+    char getFile() { return file; }
 
-    int getPieceRank()
-    {
-        return rank;
-    }
+    int getRank() { return rank; }
 
 private:
-    Piece::Type type;
-    Piece::Color color;
-    char file;
-    int rank;
+    Piece::Type type = NO_TYPE;
+    Piece::Color color = NO_COLOR;
+    char file = '_';
+    int rank = 0;
 };
 
 class Board {
 
 public:
     Board();
-
+    ~Board();
+    
+    
     void addPiece(Piece piece);
     /*
      * Set the board state from collection of pieces.
@@ -97,14 +92,20 @@ public:
     Piece getPieceByIndex(int index);
 
     std::vector<Piece> getBoardState();
-
-    ~Board();
+    
+    cv::Mat getStateDrawing();
+    
 
 private:
-    std::vector<Piece> boardState;
+    
+    std::vector<Piece> pieces;
+    
+    // From A1 to H8
+    Piece board[64];
+    
+    std::vector<cv::Mat> pieceImages;
 
 };
     
 }
 
-#endif //CHESS_VR_CHESS_HPP

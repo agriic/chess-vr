@@ -30,11 +30,33 @@ set(Sources
         src/Utils.hpp
         src/Log.cpp
         src/Log.hpp
-        src/Chess.hpp src/Chess.cpp src/Recorder.cpp src/Recorder.hpp)
+        src/Board.hpp
+        src/Board.cpp
+        src/Recorder.cpp src/Recorder.hpp)
+
+set(Images
+    images/BB.png
+    images/BK.png
+    images/BN.png
+    images/BP.png
+    images/BQ.png
+    images/BR.png
+    images/WB.png
+    images/WK.png
+    images/WN.png
+    images/WP.png
+    images/WQ.png
+    images/WR.png
+)
 
 set(CMAKE_CXX_STANDARD 14)
 
 find_package( OpenCV COMPONENTS core features2d highgui imgproc imgcodecs objdetect video REQUIRED )
+
+find_library(CF CoreFoundation)
+if (NOT CF)
+    message(FATAL_ERROR "CF not found")
+endif()
 
 include_directories( 
     src 
@@ -56,11 +78,11 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 #------------------------------------------------------
 
-add_executable(chess-vr ${Sources})
+add_executable(chess-vr ${Images} ${Sources})
 
 set_target_properties(chess-vr PROPERTIES COMPILE_FLAGS "-include pch.hpp ")
 
-target_link_libraries(chess-vr ${OpenCV_LIBS} pthread)
+target_link_libraries(chess-vr ${OpenCV_LIBS} pthread ${CF} "-framework CoreFoundation")
 
 add_custom_target(
         generate_version
@@ -73,3 +95,5 @@ set_target_properties(chess-vr PROPERTIES
   MACOSX_BUNDLE TRUE
   MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist
 )
+
+set_source_files_properties(${Images} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")

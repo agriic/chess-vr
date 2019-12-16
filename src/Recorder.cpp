@@ -76,8 +76,8 @@ void aic::Recorder::addPly(aic::Piece piece, char dst_file, int dst_rank, bool c
 {
     std::string pc; // piece type as single char string
     
-    char src_file = piece.getPieceFile();
-    int src_rank = piece.getPieceRank();
+    char src_file = piece.getFile();
+    int src_rank = piece.getRank();
     
     if (aic::Game::canCastleBasic(src_file, src_rank, dst_file, dst_rank))
     {
@@ -85,7 +85,7 @@ void aic::Recorder::addPly(aic::Piece piece, char dst_file, int dst_rank, bool c
         if (dst_file == 'C') { castlePly = "O-O-O"; // queenside
         } else castlePly = "O-O"; // kingside
         
-        if (piece.getPieceColor() == aic::Piece::Color::WHITE)
+        if (piece.getColor() == aic::Piece::Color::WHITE)
         {
             setTempWhitePly(castlePly);
         } else {
@@ -95,7 +95,7 @@ void aic::Recorder::addPly(aic::Piece piece, char dst_file, int dst_rank, bool c
         }
         
     } else {
-        switch (piece.getPieceType())
+        switch (piece.getType())
             {
                 case Piece::Type::KNIGHT: {
                     pc = "N";
@@ -123,7 +123,7 @@ void aic::Recorder::addPly(aic::Piece piece, char dst_file, int dst_rank, bool c
         ply += tolower(dst_file);
         ply += std::to_string(dst_rank);
         
-        if (piece.getPieceColor() == aic::Piece::Color::WHITE)
+        if (piece.getColor() == aic::Piece::Color::WHITE)
         {
             setTempWhitePly(ply);
         } else {
